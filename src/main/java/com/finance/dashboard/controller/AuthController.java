@@ -1,0 +1,26 @@
+package com.finance.dashboard.controller;
+
+import com.finance.dashboard.dto.AuthRequestDTO;
+import com.finance.dashboard.dto.AuthResponseDTO;
+import com.finance.dashboard.service.AuthService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/auth")
+@RequiredArgsConstructor
+@Tag(name = "Authentication")
+public class AuthController {
+
+    private final AuthService authService;
+
+    @PostMapping("/login")
+    @Operation(summary = "Login and get JWT token")
+    public ResponseEntity<AuthResponseDTO> login(@Valid @RequestBody AuthRequestDTO dto) {
+        return ResponseEntity.ok(authService.login(dto));
+    }
+}
