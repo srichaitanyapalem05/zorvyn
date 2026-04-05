@@ -1,5 +1,5 @@
-# Use Java 17
-FROM openjdk:17-jdk-slim
+# Use Eclipse Temurin Java 17 (replaces deprecated openjdk)
+FROM eclipse-temurin:17-jre-jammy
 
 # Set working directory
 WORKDIR /app
