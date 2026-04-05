@@ -1,14 +1,27 @@
-# Use Eclipse Temurin Java 17 (replaces deprecated openjdk)
-FROM eclipse-temurin:17-jre-jammy
+# Stage 1 — Build
+FROM eclipse-temurin:17-jdk-jammy AS builder
 
-# Set working directory
 WORKDIR /app
 
-# Copy jar file
-COPY target/*.jar app.jar
+# Copy maven wrapper and pom first (layer caching)
+COPY mvnw .
+COPY .mvn .mvn
+COPY pom.xml .
 
-# Expose port
+# Download dependencies
+RUN ./mvnw dependency:go-offline -q
+
+# Copy source and build
+COPY src src
+RUN ./mvnw clean package -DskipTests -q
+
+# Stage 2 — Run
+FROM eclipse-temurin:17-jre-jammy
+
+WORKDIR /app
+
+COPY --from=builder /app/target/*.jar app.jar
+
 EXPOSE 8080
 
-# Run application
 CMD ["java", "-jar", "app.jar"]
